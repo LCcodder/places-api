@@ -273,7 +273,4 @@ export class CreatePlaceDto {
   @IsObject()
   law?: LawDto;
 
-  @IsOptional()
-  @IsObject()
-  author?: AuthorDto;
 }

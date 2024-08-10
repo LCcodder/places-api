@@ -5,33 +5,30 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Place } from './entities/place.entity';
 import * as mongoose from 'mongoose';
 import { GeoService } from 'src/geo/geo.service';
-import { FindAllQuery } from './types/types';
-import { isFQDN } from 'class-validator';
+import { FindAllQuery } from "./dto/find-places.dto";
+import { resolveMongoId } from 'src/utils/mongodb/mongo-id.resolver';
+import { literateMongoQuery } from 'src/utils/mongodb/mongo-query.literator';
+
 
 @Injectable()
 export class PlacesService {
-  private static resolveMongoId(id: string): mongoose.Types.ObjectId {
-    try {
-      return new mongoose.Types.ObjectId(id);
-    } catch (error) {
-      throw new HttpException('Place can not be found', HttpStatus.NOT_FOUND);
-    }
-  }
-
-  private static removeUndefined(source: Record<string, any>) {
+  private static removeWasteFields(source: Record<string, any>) {
     for (const key in source) {
       if (
         typeof source[key] === 'object' &&
         source[key] !== null &&
         !Array.isArray(source[key])
       ) {
+        if (Object.keys(source[key]).length > 0) {
+          PlacesService.removeWasteFields(source[key]);
+        }
+
         if (!Object.keys(source[key]).length) {
           delete source[key];
           continue;
-        } else {
-          PlacesService.removeUndefined(source[key]);
         }
       }
+
       if (source[key] === undefined) delete source[key];
     }
     return source;
@@ -43,17 +40,7 @@ export class PlacesService {
     '$all',
   ];
 
-  private static parseToMongoQuery(obj: Record<string, any>) {
-    const f = (v, p = []) =>
-      typeof v === 'object' &&
-      !Object.keys(v).some((r) =>
-        PlacesService.MONGO_QUERY_OPERANDS.includes(r),
-      )
-        ? Object.entries(v).flatMap(([k, v]) => f(v, [...p, k]))
-        : [[p.join('.'), v]];
-        
-    return Object.fromEntries(f(obj));
-  }
+
 
   constructor(
     @InjectModel(Place.name)
@@ -122,19 +109,17 @@ export class PlacesService {
         corp: query.corp,
       },
     };
-    findOptions = PlacesService.removeUndefined(findOptions);
-    findOptions = PlacesService.removeUndefined(findOptions);
-    findOptions = PlacesService.removeUndefined(findOptions);
-    console.log(PlacesService.parseToMongoQuery(findOptions));
+
+    findOptions = PlacesService.removeWasteFields(findOptions);
     const foundPlaces = await this.placesModel.find(
-      PlacesService.parseToMongoQuery(findOptions),
+      literateMongoQuery(findOptions),
     );
 
     return foundPlaces;
   }
 
   async findOne(id: string) {
-    const _id = PlacesService.resolveMongoId(id);
+    const _id = resolveMongoId(id);
 
     const foundPlace = await this.placesModel.findById(_id);
     if (!foundPlace) {
@@ -145,7 +130,7 @@ export class PlacesService {
   }
 
   async update(id: string, updatePlaceDto: UpdatePlaceDto) {
-    const _id = PlacesService.resolveMongoId(id);
+    const _id = resolveMongoId(id);
 
     const state = await this.placesModel.findByIdAndUpdate(_id, updatePlaceDto);
     if (!state) {
@@ -156,7 +141,7 @@ export class PlacesService {
   }
 
   async remove(id: string) {
-    const _id = PlacesService.resolveMongoId(id);
+    const _id = resolveMongoId(id);
 
     const foundPlace = await this.placesModel.findById(_id);
     if (!foundPlace) {

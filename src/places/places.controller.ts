@@ -11,15 +11,19 @@ import {
   Req,
   UseGuards,
   Query,
+  Res,
 } from '@nestjs/common';
 import { PlacesService } from './places.service';
 import { CreatePlaceDto } from './dto/create-place.dto';
 import { UpdatePlaceDto } from './dto/update-place.dto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { RoleGuard } from 'src/auth/auth.guard';
+import { json2xml } from 'xml-js';
+import { formatResponseContent } from 'src/utils/formating/response.content.formatter';
 
 @Controller('places')
 export class PlacesController {
+
   constructor(private readonly placesService: PlacesService) {}
 
   @Post()
@@ -33,16 +37,15 @@ export class PlacesController {
     }),
   )
   create(
-    @Body() createPlaceDto: Omit<CreatePlaceDto, 'author'>,
-    @Req() req: Request,
+    @Body() createPlaceDto: CreatePlaceDto
   ) {
     return this.placesService.create(createPlaceDto);
   }
 
   @Get()
   @UseGuards(RoleGuard('user'))
-  findAll(@Query() query) {
-    return this.placesService.findAll({
+  async findAll(@Query() query, @Req() req: Request, @Res() res: Response) {
+    const places = await this.placesService.findAll({
       category: query.category,
       subcategories: query.subcategories
         ? !Array.isArray(query.subcategories)
@@ -72,12 +75,16 @@ export class PlacesController {
       license: query.license,
       corp: query.corp,
     });
+
+    return formatResponseContent(req, res, places)
   }
 
   @Get(':id')
   @UseGuards(RoleGuard('user'))
-  findOne(@Param('id') id: string) {
-    return this.placesService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req: Request, @Res() res: Response) {
+    const place = await this.placesService.findOne(id);
+
+    return formatResponseContent(req, res, place)
   }
 
   @Patch(':id')
