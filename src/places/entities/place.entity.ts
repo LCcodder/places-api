@@ -73,12 +73,7 @@ export class Place {
         // from 18, 16, 12, etc
         age_from?: number
 
-        facilities?: {
-            parking?: boolean
-            disabled_support?: boolean
-            children_playgrounds?: boolean
-            public_transport_is_reachable?: boolean
-        } | string[]
+        facilities?: string[]
 
         wikipedia?: string
         images?: string[]

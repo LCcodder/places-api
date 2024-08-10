@@ -3,14 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import configuration from 'src/config/configuration';
 
-// @Injectable()
-// export class AuthGuard implements CanActivate {
-//   canActivate(
-//     context: ExecutionContext,
-//   ): boolean | Promise<boolean> | Observable<boolean> {
-//     return true;
-//   }
-// }
+
 export const RoleGuard = (role: "admin" | "user") => {
   @Injectable()
   class RoleGuardMixin implements CanActivate {
