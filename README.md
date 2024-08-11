@@ -13,25 +13,31 @@
 1. `POST:/auth` - returns API token with expiration time
 
     <details>
-        <summary>Body:</summary>
+    <summary>Body</summary>
 
-        ```JSON
-        {
-            "email": "mr_robot@ecorp.com"
-        }
-        ```
+    ```JSON
+    {
+        "email": "mr_robot@ecorp.com"
+    }
+    ```
     </details>
     
-    Response:
+    <details>
+    <summary>Response</summary>
+        
     ```JSON
     {
         "token": "<YOUR_TOKEN>",
         "expiresIn": "24h"
     }
     ```
+    </details>
+---
 2. `POST:/places` **(admin route)** - creates place with provided fields and returns created place with generated `_id` and timestamps 
     
-    Body:
+    <details>
+    <summary>Body</summary>
+    
     ```JSON
     {
         // required
@@ -134,8 +140,11 @@
         }
     }
     ```
+    </details>
 
-    Response:
+    <details>
+    <summary>Response</summary>
+
     ```JSON
     {
         "_id": "66b744dbde0cb7ff86d627ad",
@@ -165,23 +174,30 @@
         "__v": 0
     }
     ```
-
+    </details>
+---
 3. `PATCH:/places` **(admin route)** - updates place with provided fields and returns updated place
 
-    Body:
+    <details>
+    <summary>Body</summary>
+
     ```JSON
     {
         "law": {
-        "owner": "Department Of Justice",
-        "owner_law_address": "[REDACTED]",
-        "owner_phisycal_address": "[REDACTED]",
-        "license": "[REDACTED]",
-        "corp": "S.T.A.R.S."
-    }
+            "owner": "Department Of Justice",
+            "owner_law_address": "[REDACTED]",
+            "owner_phisycal_address": "[REDACTED]",
+            "license": "[REDACTED]",
+            "corp": "S.T.A.R.S."
+        }
     }
     ```
+    </details>
 
-    Response: 
+
+    <details>
+    <summary>Response</summary>
+
     ```JSON
     {
         "_id": "66b744dbde0cb7ff86d627ad",
@@ -215,18 +231,27 @@
         "__v": 0
     }
     ```
-
+    </details>
+---
 4. `DELETE:/places/:id`  **(admin route)** - deletes place by `_id`
-    Response:
+
+    <details>
+    <summary>Response</summary>
+
     ```JSON
     {
         "success": true
     }
     ```
-
+    </details>
+---
 5. `GET:/places/:id` **(user route)** - returns found place by `_id`
 
-    Response: 
++ Supports XML format, if you need given data to be in XML use `Content-Type`header with `application/xml`
+
+    <details>
+    <summary>Response</summary>
+
     ```JSON
     {
         "_id": "66b744dbde0cb7ff86d627ad",
@@ -256,9 +281,122 @@
         "__v": 0
     }
     ```
+    </details>
 
-    + Supports XML format, if you need given data to be in XML use `Content-Type` header with `application/xml`
+---
+   
 
-6. `GET:/places **(user route)** - returns places by provided options
+6. `GET:/places` **(user route)** - returns places by provided options
+
++ Supports XML format, if you need given data to be in XML use `Content-Type`header with `application/xml`
     
-    Options:
+
+    <details>
+    <summary>Options</summary>
+    
+    | Querystring        | Description                                                      | Example value                |
+    |--------------------|------------------------------------------------------------------|------------------------------|
+    | **category**       | _Filters place by category_                                      | `shops`                      |
+    | **subcategories**  | _Adds additional categories, that can be divided by "."_         | `groceries.vegan`            |
+    | **city**           | _Filters place by city (case is necessary)_                      | `Moscow`                     |
+    | **country**        | _Filters place by country (case is necessary)_                   | `Russia`                     |
+    | **state**          | _Filters place by state (case is necessary)_                     | `Arizona`                    |
+    | **state_code**     | _Filters place by shortened state_                               | `AZ`                         |
+    | **region**         | _Filters place by state region (case is necessary)_              | `Glendale`                   |
+    | **postcode**       | _Filters place by postcode (must be number)_                     | `123133`                     |
+    | **builded_by**     | _Filters place by creator/builder_                               | `Stanford Professor`         |
+    | **open_from**      | _Filters by place opening hours (24h format)_                    | `10`                         |
+    | **open_to**        | _Filters by place closing hours (24h format)_                    | `23`                         |
+    | **is_always_open** | _Filters only always-open places (boolean)_                      | `true`                       |
+    | **age_from**       | _Filters by place minimal allowed age to enter (must be number)_ | `18`                         |
+    | **facilities**     | _Filters by place facilities such as parking (string array)_     | `parking` `disabled_support` |
+    | **owner**          | _Filters by place owner_                                         | `Donald Trump`               |
+    | **license**        | _Filters by place license (or any law document)_                 | `gambling_license`           |
+    | **corp**           | _Filters place by owning corp_                                   | `Apple`                      |
+
+    </details>
+
+    <details>
+    <summary>Response</summary>
+
+    ```JSON
+    [
+        {
+            "_id": ...,
+
+            "category": ...,
+            
+            "subcategories": ...,
+
+            "datasources": ...,
+
+            "geo": {
+                ...
+            },
+
+            "place": {
+                ...
+            },
+
+            "contacts": {
+                ...
+            },
+            "law": {
+                ...
+            },
+            "createdAt": ...,
+            "updatedAt": ...,
+            "__v": 0
+        },
+        {
+            "_id": ...,
+
+            "category": ...,
+            
+            "subcategories": ...,
+
+            "datasources": ...,
+
+            "geo": {
+                ...
+            },
+
+            "place": {
+                ...
+            },
+
+            "contacts": {
+                ...
+            },
+            "law": {
+                ...
+            },
+            "createdAt": ...,
+            "updatedAt": ...,
+            "__v": 0
+        }
+    ]
+    ```
+    </details>
+
+
+
+# Launch
+
+1. Copy this repo
+```shell
+git clone https://github.com/LCcodder/places-api
+```
+2. Install packages
+```shell
+npm i
+```
+3. Configure environment variables in `.env` file
+4. Make sure you running `Mongodb`
+5. Run app
+```shell
+npm start
+```
+
+---
+### Made by [LCcodder](https://github.com/LCcodder)

@@ -5,103 +5,100 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
   collection: 'Places',
 })
 export class Place {
+  @Prop()
+  category: string;
 
-    @Prop()
-    category: string
-    
-    @Prop()
-    subcategories: string[]
+  @Prop()
+  subcategories: string[];
 
-    @Prop()
-    datasources: string[]
+  @Prop()
+  datasources: string[];
 
-    @Prop({ type: Object })
-    geo: {
-        coordinates?: [number, number]
-        lat: number
-        long: number
+  @Prop({ type: Object })
+  geo: {
+    coordinates?: [number, number];
+    lat: number;
+    long: number;
 
-        country: string
-        country_code?: string
+    country: string;
+    country_code?: string;
 
-        city?: string
-        region?: string
+    city?: string;
+    region?: string;
 
-        state?: string
-        state_code?: string
+    state?: string;
+    state_code?: string;
 
-        suburb?: string
-        street?: string
+    suburb?: string;
+    street?: string;
 
-        full_address: string
-        address_line1?: string
-        address_line2?: string
-        address_line3?: string
-        postcode?: number
-        
-        third_party?: {
-            google_maps_link?: string
-            osm?: string
-            osm_id?: string
-        }
-    }
+    full_address: string;
+    address_line1?: string;
+    address_line2?: string;
+    address_line3?: string;
+    postcode?: number;
 
-    @Prop({ type: Object })
-    place: {
-        name: string
-        full_name?: string
-        old_name?: string
+    third_party?: {
+      google_maps_link?: string;
+      osm?: string;
+      osm_id?: string;
+    };
+  };
 
-        description?: string
+  @Prop({ type: Object })
+  place: {
+    name: string;
+    full_name?: string;
+    old_name?: string;
 
-        is_heritage?: boolean
-        is_guarded?: boolean
-        authorized_personeel_only?: boolean
-        is_goverment_property?: boolean
+    description?: string;
 
-        founded_by?: string
-        builded_at?: Date
-        construction_started_at?: Date
-        builded_by?: string
+    is_heritage?: boolean;
+    is_guarded?: boolean;
+    authorized_personeel_only?: boolean;
+    is_goverment_property?: boolean;
 
-        open_hours?: {
-            from: number
-            to: number
-        }
-        is_always_open?: boolean
+    founded_by?: string;
+    builded_at?: Date;
+    construction_started_at?: Date;
+    builded_by?: string;
 
-        // from 18, 16, 12, etc
-        age_from?: number
+    open_hours?: {
+      from: number;
+      to: number;
+    };
+    is_always_open?: boolean;
 
-        facilities?: string[]
+    // from 18, 16, 12, etc
+    age_from?: number;
 
-        wikipedia?: string
-        images?: string[]
-    }
+    facilities?: string[];
 
-    @Prop({ type: Object })
-    contacts?: {
-        website?: string
-        websites?: string[]
+    wikipedia?: string;
+    images?: string[];
+  };
 
-        phone_number?: string
-        phone_numbers?: string
+  @Prop({ type: Object })
+  contacts?: {
+    website?: string;
+    websites?: string[];
 
-        email?: string
-        emails?: string[]
+    phone_number?: string;
+    phone_numbers?: string;
 
-        links?: string[]
-    }
+    email?: string;
+    emails?: string[];
 
-    @Prop({ type: Object })
-    law?: {
-        owner?: string
-        owner_law_address?: string
-        owner_phisycal_address?: string
-        license?: string
-        corp?: string
-    }
+    links?: string[];
+  };
 
-    
+  @Prop({ type: Object })
+  law?: {
+    owner?: string;
+    owner_law_address?: string;
+    owner_phisycal_address?: string;
+    license?: string;
+    corp?: string;
+  };
 }
-export const PlaceSchema = SchemaFactory.createForClass(Place)
+export const PlaceSchema = SchemaFactory.createForClass(Place);

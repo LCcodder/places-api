@@ -11,7 +11,7 @@ export type FindAllQuery = DeepOptional<{
   state: string;
   state_code: string;
   region: string;
-  postcode: string;
+  postcode: number;
   builded_by: string;
   open_from: number;
   open_to: number;

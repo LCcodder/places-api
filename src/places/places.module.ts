@@ -20,13 +20,13 @@ import { LoggerMiddleware } from 'src/logger/logger.middleware';
       secret: configuration().jwtSecret,
       signOptions: { expiresIn: configuration().jwtExpiration },
     }),
-    GeoModule
+    GeoModule,
   ],
   controllers: [PlacesController],
   providers: [PlacesService],
 })
 export class PlacesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*')
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

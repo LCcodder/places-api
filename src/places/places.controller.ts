@@ -60,12 +60,12 @@ export class PlacesController {
       state: query.state,
       state_code: query.state_code,
       region: query.region,
-      postcode: query.postcode,
+      postcode: parseInt(query.postcode),
       builded_by: query.builded_by,
-      open_from: query.open_from,
-      open_to: query.open_to,
-      is_always_open: query.is_always_open,
-      age_from: query.age_from,
+      open_from: parseInt(query.open_from),
+      open_to: parseInt(query.open_to),
+      is_always_open: Boolean(query.is_always_open),
+      age_from: parseInt(query.age_from),
       facilities: Array.isArray(query.facilities)
         ? [...query.facilities]
         : query.facilities

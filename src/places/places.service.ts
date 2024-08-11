@@ -5,10 +5,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Place } from './entities/place.entity';
 import * as mongoose from 'mongoose';
 import { GeoService } from 'src/geo/geo.service';
-import { FindAllQuery } from "./dto/find-places.dto";
+import { FindAllQuery } from './dto/find-places.dto';
 import { resolveMongoId } from 'src/utils/mongodb/mongo-id.resolver';
 import { literateMongoQuery } from 'src/utils/mongodb/mongo-query.literator';
-
 
 @Injectable()
 export class PlacesService {
@@ -33,14 +32,6 @@ export class PlacesService {
     }
     return source;
   }
-
-  private static readonly MONGO_QUERY_OPERANDS: string[] = [
-    '$gt',
-    '$lt',
-    '$all',
-  ];
-
-
 
   constructor(
     @InjectModel(Place.name)

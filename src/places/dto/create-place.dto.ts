@@ -229,7 +229,6 @@ class LawDto {
   @IsOptional()
   @IsString()
   corp?: string;
-  
 }
 class AuthorDto {
   @IsOptional()
@@ -272,5 +271,4 @@ export class CreatePlaceDto {
   @IsOptional()
   @IsObject()
   law?: LawDto;
-
 }
