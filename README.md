@@ -1,73 +1,264 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Places API written in `Node.js`
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### This is places REST API service like `geoapify` or another similar geographic API with querying and finding places in radius.
 
-## Description
++ This API works with *role-based* auth, so if you want to create/update/delete places you must provide one of the *master keys* in `token` querystring
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# Endpoints:
+1. `POST:/auth` - returns API token with expiration time
 
-## Installation
+    <details>
+        <summary>Body:</summary>
 
-```bash
-$ npm install
-```
+        ```JSON
+        {
+            "email": "mr_robot@ecorp.com"
+        }
+        ```
+    </details>
+    
+    Response:
+    ```JSON
+    {
+        "token": "<YOUR_TOKEN>",
+        "expiresIn": "24h"
+    }
+    ```
+2. `POST:/places` **(admin route)** - creates place with provided fields and returns created place with generated `_id` and timestamps 
+    
+    Body:
+    ```JSON
+    {
+        // required
+        "category": "goverment",
+        
+        // required
+        "subcategories": ["services", "police"],
 
-## Running the app
+        // required
+        "datasources": ["OSM", "google maps"],
 
-```bash
-# development
-$ npm run start
+        "geo": {
+            "coordinates": [34.312321, 62.12476456],
+            
+            // required
+            "lat": 34.312321,
+            //required
+            "long": 62.12476456,
 
-# watch mode
-$ npm run start:dev
+            // required
+            "country": "Russia",
+            "country_code": "RU",
 
-# production mode
-$ npm run start:prod
-```
+            "city": "Moscow",
+            "region": "Khimki",
 
-## Test
+            "state": "SZAO",
+            "state_code": "sz",
 
-```bash
-# unit tests
-$ npm run test
+            "suburb": "Leninski prospect",
+            "street": "Pushkinskaya",
 
-# e2e tests
-$ npm run test:e2e
+            // required
+            "full_address": "Moscow, Khimki, Pushkina 12/23",
 
-# test coverage
-$ npm run test:cov
-```
+            "address_line1": "string",
+            "address_line2": "string",
+            "address_line3": "string",
+            "postcode": 123457,
+            
+            "third_party": {
+                "google_maps_link": "<GM link>",
+                "osm": "<osm link>",
+                "osm_id": "asdada1231231"
+            }
+        },
 
-## Support
+        "place": {
+            // required
+            "name": "Police department of Khimki",
+            
+            "full_name": "GU MVD of Khimki, Moscow Oblast",
+            "old_name": "Deputy of Khimki",
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+            "description": "Police department, located near west road",
 
-## Stay in touch
+            "is_heritage": false,
+            "is_guarded": true,
+            "authorized_personeel_only": true,
+            "is_goverment_property": true,
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+            "founded_by": "Department of Justice of Moscow",
+            "builded_at": "2024-08-11T15:48:00.852Z",
+            "construction_started_at": "2024-08-11T15:48:00.852Z",
+            "builded_by": "REDACTED",
 
-## License
+            "open_hours": {
+                "from": 0,
+                "to": 24
+            },
 
-Nest is [MIT licensed](LICENSE).
+            "is_always_open": true,
+            "age_from": 21,
+
+            "facilities": ["parking"],
+
+            "wikipedia": "<wiki link>",
+            "images": "http://images.com/police-department/1"
+        },
+
+        "contacts": {
+            "website": "http://khpd.ru",
+            "websites": ["http://khpd.ru"],
+
+            "phone_number": "911",
+            "phone_numbers": ["911"],
+
+            "email": "khpd@p.ru",
+            "emails": ["khpd@p.ru"],
+
+            "links": ["http://khpd.ru"]
+        },
+
+        "law": {
+            "owner": "Department Of Justice",
+            "owner_law_address": "ae12424",
+            "owner_phisycal_address": "Kremlyn",
+            "license": "gov12313",
+            "corp": "S.T.A.R.S."
+        }
+    }
+    ```
+
+    Response:
+    ```JSON
+    {
+        "_id": "66b744dbde0cb7ff86d627ad",
+        "category": ...,
+        
+        "subcategories": ...,
+
+        "datasources": ...,
+
+        "geo": {
+            ...
+        },
+
+        "place": {
+            ...
+        },
+
+        "contacts": {
+            ...
+        },
+
+        "law": {
+            ...
+        },
+        "createdAt": "2024-08-10T10:45:47.522Z",
+        "updatedAt": "2024-08-10T10:45:47.522Z",
+        "__v": 0
+    }
+    ```
+
+3. `PATCH:/places` **(admin route)** - updates place with provided fields and returns updated place
+
+    Body:
+    ```JSON
+    {
+        "law": {
+        "owner": "Department Of Justice",
+        "owner_law_address": "[REDACTED]",
+        "owner_phisycal_address": "[REDACTED]",
+        "license": "[REDACTED]",
+        "corp": "S.T.A.R.S."
+    }
+    }
+    ```
+
+    Response: 
+    ```JSON
+    {
+        "_id": "66b744dbde0cb7ff86d627ad",
+
+        "category": ...,
+        
+        "subcategories": ...,
+
+        "datasources": ...,
+
+        "geo": {
+            ...
+        },
+
+        "place": {
+            ...
+        },
+
+        "contacts": {
+            ...
+        },
+        "law": {
+            "owner": "Department Of Justice",
+            "owner_law_address": "[REDACTED]",
+            "owner_phisycal_address": "[REDACTED]",
+            "license": "[REDACTED]",
+            "corp": "S.T.A.R.S."
+        },
+        "createdAt": "2024-08-10T10:45:47.522Z",
+        "updatedAt": "2024-08-10T10:45:47.522Z",
+        "__v": 0
+    }
+    ```
+
+4. `DELETE:/places/:id`  **(admin route)** - deletes place by `_id`
+    Response:
+    ```JSON
+    {
+        "success": true
+    }
+    ```
+
+5. `GET:/places/:id` **(user route)** - returns found place by `_id`
+
+    Response: 
+    ```JSON
+    {
+        "_id": "66b744dbde0cb7ff86d627ad",
+
+        "category": ...,
+        
+        "subcategories": ...,
+
+        "datasources": ...,
+
+        "geo": {
+            ...
+        },
+
+        "place": {
+            ...
+        },
+
+        "contacts": {
+            ...
+        },
+        "law": {
+            ...
+        },
+        "createdAt": "2024-08-10T10:45:47.522Z",
+        "updatedAt": "2024-08-10T10:45:47.522Z",
+        "__v": 0
+    }
+    ```
+
+    + Supports XML format, if you need given data to be in XML use `Content-Type` header with `application/xml`
+
+6. `GET:/places **(user route)** - returns places by provided options
+    
+    Options:
