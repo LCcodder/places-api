@@ -21,4 +21,5 @@ export type FindAllQuery = DeepOptional<{
   owner: string;
   license: string;
   corp: string;
+  sort_by_build_date: -1 | 1;
 }>;

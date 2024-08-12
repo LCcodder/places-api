@@ -5,6 +5,6 @@ import configuration from './config/configuration';
 async function bootstrap() {
   configuration().log()
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  await app.listen(configuration().port);
 }
 bootstrap();

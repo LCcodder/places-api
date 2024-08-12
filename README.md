@@ -307,12 +307,13 @@
     | **builded_by**     | _Filters place by creator/builder_                               | `Stanford Professor`         |
     | **open_from**      | _Filters by place opening hours (24h format)_                    | `10`                         |
     | **open_to**        | _Filters by place closing hours (24h format)_                    | `23`                         |
-    | **is_always_open** | _Filters only always-open places (boolean)_                      | `true`                       |
+    | **is_always_open** | _Filters only always-open places (1 or 0)_                       | `1`                          |
     | **age_from**       | _Filters by place minimal allowed age to enter (must be number)_ | `18`                         |
     | **facilities**     | _Filters by place facilities such as parking (string array)_     | `parking` `disabled_support` |
     | **owner**          | _Filters by place owner_                                         | `Donald Trump`               |
     | **license**        | _Filters by place license (or any law document)_                 | `gambling_license`           |
     | **corp**           | _Filters place by owning corp_                                   | `Apple`                      |
+    | **sort**           | _Sorts places bu build date (1 or -1)_                           | `-1`                         |
 
     </details>
 

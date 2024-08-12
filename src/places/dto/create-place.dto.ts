@@ -11,6 +11,7 @@ import {
   IsBoolean,
   Min,
   Max,
+  IsDateString,
 } from 'class-validator';
 
 class ThirdPartyDto {
@@ -142,12 +143,12 @@ class PlaceDto {
   founded_by?: string;
 
   @IsOptional()
-  @IsString()
-  builded_at?: string;
+  @IsDateString()
+  builded_at?: Date;
 
   @IsOptional()
-  @IsString()
-  construction_started_at?: string;
+  @IsDateString()
+  construction_started_at?: Date;
 
   @IsOptional()
   @IsString()

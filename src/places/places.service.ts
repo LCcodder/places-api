@@ -28,7 +28,12 @@ export class PlacesService {
         }
       }
 
-      if (source[key] === undefined) delete source[key];
+      if (
+        source[key] === undefined ||
+        source[key] === null ||
+        Number.isNaN(source[key])
+      )
+        delete source[key];
     }
     return source;
   }
@@ -102,9 +107,13 @@ export class PlacesService {
     };
 
     findOptions = PlacesService.removeWasteFields(findOptions);
-    const foundPlaces = await this.placesModel.find(
-      literateMongoQuery(findOptions),
-    );
+    const foundPlaces = await this.placesModel
+      .find(literateMongoQuery(findOptions))
+      .sort(
+        query.sort_by_build_date
+          ? { 'place.builded_at': query.sort_by_build_date }
+          : undefined,
+      );
 
     return foundPlaces;
   }

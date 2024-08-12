@@ -23,7 +23,6 @@ import { formatResponseContent } from 'src/utils/formating/response.content.form
 
 @Controller('places')
 export class PlacesController {
-
   constructor(private readonly placesService: PlacesService) {}
 
   @Post()
@@ -36,9 +35,11 @@ export class PlacesController {
       transform: true,
     }),
   )
-  create(
-    @Body() createPlaceDto: CreatePlaceDto
-  ) {
+  create(@Body() createPlaceDto: CreatePlaceDto) {
+    createPlaceDto.place.construction_started_at = new Date(
+      createPlaceDto.place.construction_started_at,
+    );
+    createPlaceDto.place.builded_at = new Date(createPlaceDto.place.builded_at);
     return this.placesService.create(createPlaceDto);
   }
 
@@ -52,20 +53,21 @@ export class PlacesController {
           ? query.subcategories.split('.')
           : undefined
         : undefined,
-      lat: parseFloat(query.lat),
-      long: parseFloat(query.long),
-      radius_in_meters: parseFloat(query.radius),
+      lat: query.lat ? parseFloat(query.lat) : undefined,
+      long: query.long ? parseFloat(query.long) : undefined,
+      radius_in_meters: query.radius ? parseFloat(query.radius) : undefined,
       city: query.city,
       country: query.country,
       state: query.state,
       state_code: query.state_code,
       region: query.region,
-      postcode: parseInt(query.postcode),
+      postcode: query.postcode ? parseInt(query.postcode) : undefined,
       builded_by: query.builded_by,
-      open_from: parseInt(query.open_from),
-      open_to: parseInt(query.open_to),
-      is_always_open: Boolean(query.is_always_open),
-      age_from: parseInt(query.age_from),
+      open_from: query.open_from ? parseInt(query.open_from) : undefined,
+      open_to: query.open_to ? parseInt(query.open_to) : undefined,
+      is_always_open:
+        query.is_always_open >= 0 ? Boolean(query.is_always_open) : undefined,
+      age_from: query.age_from ? parseInt(query.age_from) : undefined,
       facilities: Array.isArray(query.facilities)
         ? [...query.facilities]
         : query.facilities
@@ -74,17 +76,22 @@ export class PlacesController {
       owner: query.owner,
       license: query.license,
       corp: query.corp,
+      sort_by_build_date: parseInt(query.sort) >= 1 ? 1 : -1,
     });
 
-    return formatResponseContent(req, res, places)
+    return formatResponseContent(req, res, places);
   }
 
   @Get(':id')
   @UseGuards(RoleGuard('user'))
-  async findOne(@Param('id') id: string, @Req() req: Request, @Res() res: Response) {
+  async findOne(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const place = await this.placesService.findOne(id);
 
-    return formatResponseContent(req, res, place)
+    return formatResponseContent(req, res, place);
   }
 
   @Patch(':id')
