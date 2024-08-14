@@ -97,5 +97,28 @@ type Place {
 
 type Query {
     place(id: ID!): Place!
-    places: [Place]!
+    places(
+        category: String,
+        subcategories: String,
+        lat: Float,
+        long: Float,
+        radius: Float,
+        city: String,
+        country: String,
+        state: String,
+        state_code: String,
+        region: String,
+        postcode: Int,
+        builded_by: String,
+        open_from: String,
+        open_to: String,
+        is_always_open: Int,
+        age_from: Int,
+        facilities: [String],
+        owner: String,
+        license: String,
+        sort: Int,
+        limit: Int,
+        offset: Int
+    ): [Place]!
 }

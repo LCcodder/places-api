@@ -94,7 +94,7 @@ export class Place {
 export abstract class IQuery {
     abstract place(id: string): Place | Promise<Place>;
 
-    abstract places(): Nullable<Place>[] | Promise<Nullable<Place>[]>;
+    abstract places(category?: Nullable<string>, subcategories?: Nullable<string>, lat?: Nullable<number>, long?: Nullable<number>, radius?: Nullable<number>, city?: Nullable<string>, country?: Nullable<string>, state?: Nullable<string>, state_code?: Nullable<string>, region?: Nullable<string>, postcode?: Nullable<number>, builded_by?: Nullable<string>, open_from?: Nullable<string>, open_to?: Nullable<string>, is_always_open?: Nullable<number>, age_from?: Nullable<number>, facilities?: Nullable<Nullable<string>[]>, owner?: Nullable<string>, license?: Nullable<string>, sort?: Nullable<number>, limit?: Nullable<number>, offset?: Nullable<number>): Nullable<Place>[] | Promise<Nullable<Place>[]>;
 }
 
 type Nullable<T> = T | null;

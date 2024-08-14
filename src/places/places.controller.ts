@@ -19,6 +19,7 @@ import { UpdatePlaceDto } from './dto/update-place.dto';
 import { Request, Response } from 'express';
 import { RoleGuard } from 'src/auth/auth.guard';
 import { formatResponseContent } from 'src/utils/formating/response.content.formatter';
+import { formatQueryToDto } from 'src/utils/formating/format.find-places.dto';
 
 @Controller('places')
 export class PlacesController {
@@ -45,38 +46,10 @@ export class PlacesController {
   @Get()
   @UseGuards(RoleGuard('user'))
   async findAll(@Query() query, @Req() req: Request, @Res() res: Response) {
-    const places = await this.placesService.findAll({
-      category: query.category,
-      subcategories: query.subcategories
-        ? !Array.isArray(query.subcategories)
-          ? query.subcategories.split('.')
-          : undefined
-        : undefined,
-      lat: query.lat ? parseFloat(query.lat) : undefined,
-      long: query.long ? parseFloat(query.long) : undefined,
-      radius_in_meters: query.radius ? parseFloat(query.radius) : undefined,
-      city: query.city,
-      country: query.country,
-      state: query.state,
-      state_code: query.state_code,
-      region: query.region,
-      postcode: query.postcode ? parseInt(query.postcode) : undefined,
-      builded_by: query.builded_by,
-      open_from: query.open_from ? parseInt(query.open_from) : undefined,
-      open_to: query.open_to ? parseInt(query.open_to) : undefined,
-      is_always_open:
-        query.is_always_open >= 0 ? Boolean(query.is_always_open) : undefined,
-      age_from: query.age_from ? parseInt(query.age_from) : undefined,
-      facilities: Array.isArray(query.facilities)
-        ? [...query.facilities]
-        : query.facilities
-          ? [query.facilities]
-          : undefined,
-      owner: query.owner,
-      license: query.license,
-      corp: query.corp,
-      sort_by_build_date: parseInt(query.sort) >= 1 ? 1 : -1,
-    }, { limit: query.limit, offset: query.offset });
+    const places = await this.placesService.findAll(formatQueryToDto(query), {
+      limit: query.limit,
+      offset: query.offset,
+    });
 
     return formatResponseContent(req, res, places);
   }
