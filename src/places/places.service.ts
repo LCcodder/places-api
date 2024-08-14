@@ -49,7 +49,7 @@ export class PlacesService {
     return place;
   }
 
-  async findAll(query: FindAllQuery) {
+  async findAll(query: FindAllQuery, options?: { limit: number, offset: number }) {
     let latField = undefined;
     let longField = undefined;
 
@@ -113,7 +113,7 @@ export class PlacesService {
         query.sort_by_build_date
           ? { 'place.builded_at': query.sort_by_build_date }
           : undefined,
-      );
+      ).limit(options?.limit).skip(options?.offset);
 
     return foundPlaces;
   }

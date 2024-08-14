@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import configuration from 'src/config/configuration';
 import { GeoModule } from 'src/geo/geo.module';
 import { LoggerMiddleware } from 'src/logger/logger.middleware';
+import { PlacesResolver } from './places.resolver';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { LoggerMiddleware } from 'src/logger/logger.middleware';
     GeoModule,
   ],
   controllers: [PlacesController],
-  providers: [PlacesService],
+  providers: [PlacesService, PlacesResolver],
 })
 export class PlacesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

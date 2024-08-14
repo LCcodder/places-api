@@ -18,7 +18,6 @@ import { CreatePlaceDto } from './dto/create-place.dto';
 import { UpdatePlaceDto } from './dto/update-place.dto';
 import { Request, Response } from 'express';
 import { RoleGuard } from 'src/auth/auth.guard';
-import { json2xml } from 'xml-js';
 import { formatResponseContent } from 'src/utils/formating/response.content.formatter';
 
 @Controller('places')
@@ -77,7 +76,7 @@ export class PlacesController {
       license: query.license,
       corp: query.corp,
       sort_by_build_date: parseInt(query.sort) >= 1 ? 1 : -1,
-    });
+    }, { limit: query.limit, offset: query.offset });
 
     return formatResponseContent(req, res, places);
   }

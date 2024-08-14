@@ -314,6 +314,8 @@
     | **license**        | _Filters by place license (or any law document)_                 | `gambling_license`           |
     | **corp**           | _Filters place by owning corp_                                   | `Apple`                      |
     | **sort**           | _Sorts places bu build date (1 or -1)_                           | `-1`                         |
+    | **limit**          | _Pagination limit_                                               | `1`                          |
+    | **offset**         | _Pagination offset_                                              | `2`                          |
 
     </details>
 

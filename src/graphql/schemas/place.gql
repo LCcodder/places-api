@@ -1,0 +1,11 @@
+type Place {
+    category: String!
+    subcategories: [String]!
+    datasources: [String]!
+    geo: {
+        coordinates: [Int]
+        lat: Int!
+        long: Int!
+    }!
+
+}
