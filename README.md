@@ -384,7 +384,13 @@
     ```
     </details>
 
+# Graphql
 
+### API supports Graphql query on finding multiple places or one place by id
++ You can found schema at `/src/graphql/schemas/place.graphql`
++ To access Graphql use `/graphql` endpoint
++ `places` query supports all options that in http endpoint
++ To provide api token use `token` header, unlike queryparam in http endpoint
 
 # Launch
 
