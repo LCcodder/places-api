@@ -12,21 +12,27 @@ import configuration from 'src/config/configuration';
 export const RoleGuard = (role: 'admin' | 'user') => {
   @Injectable()
   class RoleGuardMixin implements CanActivate {
+    private static extractToken(context: any): string | undefined {
+      return context.contextType === 'http'
+      ? context.switchToHttp().getRequest().query?.token
+      : context.args[2]?.headers['token'];
+    }
+
     constructor(public jwtService: JwtService) {}
 
     canActivate(
       context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
-      const request = context.switchToHttp().getRequest();
-      const apiToken = request.query?.token;
+      const apiToken = RoleGuardMixin.extractToken(context)
+        
       if (!apiToken) return false;
 
       if (role === 'admin') {
         return configuration().masterKeys.includes(apiToken);
       }
 
-      if (configuration().masterKeys.includes(apiToken)) return true
-      
+      if (configuration().masterKeys.includes(apiToken)) return true;
+
       try {
         this.jwtService.verify(apiToken);
       } catch (error) {

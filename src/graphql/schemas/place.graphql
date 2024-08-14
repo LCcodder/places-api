@@ -1,0 +1,101 @@
+
+type GeoThirdParty {
+    google_maps_link: String
+    osm: String
+    osm_id: String
+}
+type Geo {
+    coordinates: [Float]
+    lat: Float!
+    long: Float!
+
+    country: String!
+    country_code: String
+
+    city: String
+    region: String
+
+    state: String
+    state_code: String
+
+    suburb: String
+    street: String
+
+    full_address: String!
+    address_line1: String
+    address_line2: String
+    address_line3: String
+    postcode: Int
+
+    third_party: GeoThirdParty
+}
+type PlaceOpenHours {
+    from: Int!
+    to: Int!
+}
+type _Place {
+    name: String!
+    full_name: String
+    old_name: String
+
+    description: String
+
+    is_heritage: Boolean
+    is_guarded: Boolean
+    authorized_personeel_only: Boolean
+    is_goverment_property: Boolean
+
+    founded_by: String
+    builded_at: String
+    construction_started_at: String
+    builded_by: String
+
+    open_hours: PlaceOpenHours!
+    is_always_open: Boolean
+
+    age_from: Int
+
+    facilities: [String]
+
+    wikipedia: String
+    images: [String]
+}
+type Contacts {
+    website: String
+    websites: [String]
+
+    phone_number: String
+    phone_numbers: String
+
+    email: String
+    emails: [String]
+
+    links: [String]
+}
+type Law {
+    owner: String
+    owner_law_address: String
+    owner_phisycal_address: String
+    license: String
+    corp: String
+}
+type Place {
+    category: String!
+    subcategories: [String]!
+    datasources: [String]!
+    geo: Geo!
+
+    place: _Place!
+    contacts: Contacts
+    law: Law
+
+    # metadata
+    _id: ID!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Query {
+    place(id: ID!): Place!
+    places: [Place]!
+}
