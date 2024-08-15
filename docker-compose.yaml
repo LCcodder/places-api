@@ -4,7 +4,7 @@ services:
     build: .
     restart: on-failure
     environment:
-      - MONGODB_URL=mongodb://admin:admin@mongodb:27017/PlacesAPI
+      - MONGODB_URL=mongodb://admin:admin@mongodb:27017
       - MASTER_KEYS=ashfojhuihgusAIOGUHJOIUSADGHjoSDgj, hdashfuiahfuiashfuiashfuias, fhuiahfuiahfuia
       - JWT_SECRET=dsafasfadfadsfdsafdsfdsfdssdfdsfdsf
       - JWT_EXPIRATION=24h
@@ -24,6 +24,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: admin
     expose:
       - 27017
+    ports:
+      - '27017:27017'
     volumes:
       - mongodb-data:/data/db
     networks:
