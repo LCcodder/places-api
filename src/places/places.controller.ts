@@ -17,9 +17,9 @@ import { PlacesService } from './places.service';
 import { CreatePlaceDto } from './dto/create-place.dto';
 import { UpdatePlaceDto } from './dto/update-place.dto';
 import { Request, Response } from 'express';
-import { RoleGuard } from 'src/auth/auth.guard';
-import { formatResponseContent } from 'src/utils/formating/response.content.formatter';
-import { formatQueryToDto } from 'src/utils/formating/format.find-places.dto';
+import { RoleGuard } from 'src/shared/guards/auth.guard';
+import { formatResponseContent } from 'src/shared/utils/formating/response-content.formatter';
+import { formatPlacesQueryToDto } from 'src/shared/utils/formating/places-query.formatter';
 
 @Controller('places')
 export class PlacesController {
@@ -36,17 +36,14 @@ export class PlacesController {
     }),
   )
   create(@Body() createPlaceDto: CreatePlaceDto) {
-    createPlaceDto.place.construction_started_at = new Date(
-      createPlaceDto.place.construction_started_at,
-    );
-    createPlaceDto.place.builded_at = new Date(createPlaceDto.place.builded_at);
+    
     return this.placesService.create(createPlaceDto);
   }
 
   @Get()
   @UseGuards(RoleGuard('user'))
   async findAll(@Query() query, @Req() req: Request, @Res() res: Response) {
-    const places = await this.placesService.findAll(formatQueryToDto(query), {
+    const places = await this.placesService.findAll(formatPlacesQueryToDto(query), {
       limit: query.limit,
       offset: query.offset,
     });

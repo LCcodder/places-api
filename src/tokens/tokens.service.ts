@@ -5,10 +5,10 @@ import configuration from 'src/config/configuration';
 
 
 @Injectable()
-export class AuthService {
+export class TokensService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async authorize(authDto: AuthDto) {
+  public async generateToken(authDto: AuthDto) {
     return {
       token: this.jwtService.sign(authDto),
       expiresIn: configuration().jwtExpiration

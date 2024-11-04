@@ -31,8 +31,6 @@ export const RoleGuard = (role: 'admin' | 'user') => {
         return configuration().masterKeys.includes(apiToken);
       }
 
-      if (configuration().masterKeys.includes(apiToken)) return true;
-
       try {
         this.jwtService.verify(apiToken);
       } catch (error) {

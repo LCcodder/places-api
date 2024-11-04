@@ -1,6 +1,6 @@
 import { FindAllQuery } from 'src/places/dto/find-places.dto';
 
-export const formatQueryToDto = (query: any): FindAllQuery => {
+export const formatPlacesQueryToDto = (query: any): FindAllQuery => {
   return {
     category: query.category,
     subcategories: query.subcategories

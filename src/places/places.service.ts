@@ -6,8 +6,13 @@ import { Place } from './entities/place.entity';
 import * as mongoose from 'mongoose';
 import { GeoService } from 'src/geo/geo.service';
 import { FindAllQuery } from './dto/find-places.dto';
-import { resolveMongoId } from 'src/utils/mongodb/mongo-id.resolver';
-import { literateMongoQuery } from 'src/utils/mongodb/mongo-query.literator';
+import { resolveMongoId } from 'src/shared/utils/mongodb/mongo-id.resolver';
+import { literateMongoQuery } from 'src/shared/utils/mongodb/mongo-query.literator';
+
+type CoordsQuery = {
+  latField: { $gt: number; $lt: number } | undefined;
+  longField: { $gt: number; $lt: number } | undefined;
+};
 
 @Injectable()
 export class PlacesService {
@@ -38,50 +43,46 @@ export class PlacesService {
     return source;
   }
 
+  private static checkRadiusValidity(query: FindAllQuery): void {
+    if (!query?.radius_in_meters)
+      throw new HttpException(
+        'Radius must be provided',
+        HttpStatus.BAD_REQUEST,
+      );
+  }
+
+  private static isCoordsProvided(query: FindAllQuery): boolean {
+    return Boolean(query?.long) && Boolean(query?.lat);
+  }
+
+  private static formatCreatePlaceDtoDates(createPlaceDto: CreatePlaceDto) {
+    createPlaceDto.place.construction_started_at = new Date(
+      createPlaceDto.place.construction_started_at,
+    );
+    createPlaceDto.place.builded_at = new Date(createPlaceDto.place.builded_at);
+    return createPlaceDto
+  }
+
   constructor(
     @InjectModel(Place.name)
     private readonly placesModel: mongoose.Model<Place>,
     private readonly geoService: GeoService,
   ) {}
 
-  async create(createPlaceDto: CreatePlaceDto) {
+  public async create(createPlaceDto: CreatePlaceDto) {
+    createPlaceDto = PlacesService.formatCreatePlaceDtoDates(createPlaceDto)
+    
     const place = await this.placesModel.create(createPlaceDto);
     return place;
   }
 
-  async findAll(query: FindAllQuery, options?: { limit: number, offset: number }) {
-    let latField = undefined;
-    let longField = undefined;
-
-    if (query?.long && query?.lat) {
-      if (!query.radius_in_meters)
-        throw new HttpException(
-          'Radius must be provided',
-          HttpStatus.BAD_REQUEST,
-        );
-
-      const coordsAround = this.geoService.calculateAround({
-        lat: query.lat,
-        long: query.long,
-        radiusInMeters: query.radius_in_meters,
-      });
-
-      latField = {
-        $gt: query.lat - coordsAround.latAround,
-        $lt: query.lat + coordsAround.latAround,
-      };
-      longField = {
-        $gt: query.long - coordsAround.longAround,
-        $lt: query.long + coordsAround.longAround,
-      };
-    }
-
-    let findOptions: Parameters<typeof this.placesModel.findOne>[0] = {
+  private generateMongoFindOptions(query: FindAllQuery, coords: CoordsQuery): mongoose.FilterQuery<Place> {
+    let findOptions: mongoose.FilterQuery<Place> = {
       category: query.category,
       subcategories: { $all: query.subcategories },
       geo: {
-        lat: latField,
-        long: longField,
+        lat: coords.latField,
+        long: coords.longField,
         city: query.city,
         country: query.country,
         state: query.state,
@@ -107,13 +108,55 @@ export class PlacesService {
     };
 
     findOptions = PlacesService.removeWasteFields(findOptions);
+
+    return findOptions;
+  }
+
+  private getCordsDeltaQuery(query: FindAllQuery): CoordsQuery {
+    if (!PlacesService.isCoordsProvided(query))
+      return {
+        latField: undefined,
+        longField: undefined,
+      };
+    
+
+    PlacesService.checkRadiusValidity(query);
+
+    const coordsAround = this.geoService.calculateAround({
+      lat: query.lat,
+      long: query.long,
+      radiusInMeters: query.radius_in_meters,
+    });
+
+    return {
+      latField: {
+        $gt: query.lat - coordsAround.latAround,
+        $lt: query.lat + coordsAround.latAround,
+      },
+      longField: {
+        $gt: query.long - coordsAround.longAround,
+        $lt: query.long + coordsAround.longAround,
+      },
+    };
+  }
+
+  public async findAll(
+    query: FindAllQuery,
+    options?: { limit: number; offset: number },
+  ) {
+    const coords = this.getCordsDeltaQuery(query);
+
+    const findOptions = this.generateMongoFindOptions(query, coords);
+
     const foundPlaces = await this.placesModel
       .find(literateMongoQuery(findOptions))
       .sort(
         query.sort_by_build_date
           ? { 'place.builded_at': query.sort_by_build_date }
           : undefined,
-      ).limit(options?.limit).skip(options?.offset);
+      )
+      .limit(options?.limit)
+      .skip(options?.offset);
 
     return foundPlaces;
   }

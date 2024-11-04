@@ -5,12 +5,12 @@ import {
   ValidationPipe,
   UsePipes,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { TokensService } from './tokens.service';
 import { AuthDto } from './dto/auth.dto';
 
 @Controller('auth')
-export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+export class TokensController {
+  constructor(private readonly authService: TokensService) {}
 
   @Post()
   @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
@@ -21,7 +21,7 @@ export class AuthController {
       transform: true,
     }),
   )
-  authorize(@Body() authDto: AuthDto) {
-    return this.authService.authorize(authDto);
+  public async getToken(@Body() authDto: AuthDto) {
+    return this.authService.generateToken(authDto);
   }
 }

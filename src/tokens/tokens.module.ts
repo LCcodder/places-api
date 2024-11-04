@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
+import { TokensService } from './tokens.service';
+import { TokensController } from './tokens.controller';
 import { JwtModule } from '@nestjs/jwt';
 import configuration from 'src/config/configuration';
 
@@ -11,7 +11,7 @@ import configuration from 'src/config/configuration';
       signOptions: { expiresIn: configuration().jwtExpiration },
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
+  controllers: [TokensController],
+  providers: [TokensService],
 })
-export class AuthModule {}
+export class TokensModule {}

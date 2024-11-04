@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { PlacesModule } from './places/places.module';
-import { AuthModule } from './auth/auth.module';
+import { TokensModule } from './tokens/tokens.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GeoModule } from './geo/geo.module';
 import configuration from './config/configuration';
@@ -12,7 +12,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 @Module({
   imports: [
     PlacesModule,
-    AuthModule,
+    TokensModule,
     MongooseModule.forRoot(configuration().mongodbUrl),
     GeoModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({

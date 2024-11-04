@@ -2,10 +2,10 @@ import { Args, Resolver, Query } from '@nestjs/graphql';
 import { PlacesService } from './places.service';
 import { Place } from './entities/place.entity';
 import { UseGuards } from '@nestjs/common';
-import { RoleGuard } from 'src/auth/auth.guard';
-import { formatQueryToDto } from 'src/utils/formating/format.find-places.dto';
+import { RoleGuard } from 'src/shared/guards/auth.guard';
+import { formatPlacesQueryToDto } from 'src/shared/utils/formating/places-query.formatter';
 
-@Resolver((of) => Place)
+@Resolver((_of) => Place)
 export class PlacesResolver {
   constructor(private readonly placesService: PlacesService) {}
 
@@ -18,7 +18,7 @@ export class PlacesResolver {
   @Query()
   @UseGuards(RoleGuard('user'))
   places(@Args() args: any) {
-    return this.placesService.findAll(formatQueryToDto(args), {
+    return this.placesService.findAll(formatPlacesQueryToDto(args), {
       limit: args.limit,
       offset: args.offset,
     });
