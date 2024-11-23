@@ -1,13 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreatePlaceDto } from './dto/create-place.dto';
-import { UpdatePlaceDto } from './dto/update-place.dto';
+import { CreatePlaceDto } from '../dto/create-place.dto';
+import { UpdatePlaceDto } from '../dto/update-place.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Place } from './entities/place.entity';
+import { Place } from '../entities/place.entity';
 import * as mongoose from 'mongoose';
-import { GeoService } from 'src/geo/geo.service';
-import { FindAllQuery } from './dto/find-places.dto';
-import { resolveMongoId } from 'src/shared/utils/mongodb/mongo-id.resolver';
-import { literateMongoQuery } from 'src/shared/utils/mongodb/mongo-query.literator';
+import { GeoService } from 'src/api/core/geo/service/geo.service';
+import { FindAllQuery } from '../dto/find-places.dto';
+import { resolveMongoId } from 'src/api/shared/utils/mongodb/mongo-id.resolver';
+import { literateMongoQuery } from 'src/api/shared/utils/mongodb/mongo-query.literator';
+import { IPlacesService } from './places.service.interface';
+import { removeWasteFields } from 'src/api/shared/utils/mongodb/waste-fields.remover';
 
 type CoordsQuery = {
   latField: { $gt: number; $lt: number } | undefined;
@@ -15,34 +17,7 @@ type CoordsQuery = {
 };
 
 @Injectable()
-export class PlacesService {
-  private static removeWasteFields(source: Record<string, any>) {
-    for (const key in source) {
-      if (
-        typeof source[key] === 'object' &&
-        source[key] !== null &&
-        !Array.isArray(source[key])
-      ) {
-        if (Object.keys(source[key]).length > 0) {
-          PlacesService.removeWasteFields(source[key]);
-        }
-
-        if (!Object.keys(source[key]).length) {
-          delete source[key];
-          continue;
-        }
-      }
-
-      if (
-        source[key] === undefined ||
-        source[key] === null ||
-        Number.isNaN(source[key])
-      )
-        delete source[key];
-    }
-    return source;
-  }
-
+export class PlacesService implements IPlacesService {
   private static checkRadiusValidity(query: FindAllQuery): void {
     if (!query?.radius_in_meters)
       throw new HttpException(
@@ -55,7 +30,7 @@ export class PlacesService {
     return Boolean(query?.long) && Boolean(query?.lat);
   }
 
-  private static formatCreatePlaceDtoDates(createPlaceDto: CreatePlaceDto) {
+  private static formatCreatePlaceDtoDates(createPlaceDto: CreatePlaceDto): CreatePlaceDto {
     createPlaceDto.place.construction_started_at = new Date(
       createPlaceDto.place.construction_started_at,
     );
@@ -107,7 +82,7 @@ export class PlacesService {
       },
     };
 
-    findOptions = PlacesService.removeWasteFields(findOptions);
+    findOptions = removeWasteFields(findOptions)
 
     return findOptions;
   }
@@ -161,7 +136,7 @@ export class PlacesService {
     return foundPlaces;
   }
 
-  async findOne(id: string) {
+  public async findOne(id: string) {
     const _id = resolveMongoId(id);
 
     const foundPlace = await this.placesModel.findById(_id);
@@ -172,7 +147,7 @@ export class PlacesService {
     return foundPlace;
   }
 
-  async update(id: string, updatePlaceDto: UpdatePlaceDto) {
+  public async update(id: string, updatePlaceDto: UpdatePlaceDto) {
     const _id = resolveMongoId(id);
 
     const state = await this.placesModel.findByIdAndUpdate(_id, updatePlaceDto);
@@ -183,7 +158,7 @@ export class PlacesService {
     return { ...(state as any)._doc, ...updatePlaceDto };
   }
 
-  async remove(id: string) {
+  public async remove(id: string) {
     const _id = resolveMongoId(id);
 
     const foundPlace = await this.placesModel.findById(_id);
@@ -193,6 +168,6 @@ export class PlacesService {
 
     await this.placesModel.findByIdAndDelete(_id);
 
-    return { success: true };
+    return { success: true as true };
   }
 }

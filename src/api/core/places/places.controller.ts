@@ -13,13 +13,13 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { PlacesService } from './places.service';
+import { PlacesService } from './service/places.service';
 import { CreatePlaceDto } from './dto/create-place.dto';
 import { UpdatePlaceDto } from './dto/update-place.dto';
 import { Request, Response } from 'express';
-import { RoleGuard } from 'src/shared/guards/auth.guard';
-import { formatResponseContent } from 'src/shared/utils/formating/response-content.formatter';
-import { formatPlacesQueryToDto } from 'src/shared/utils/formating/places-query.formatter';
+import { RoleGuard } from 'src/api/shared/guards/auth.guard';
+import { formatResponseContent } from 'src/api/shared/utils/formating/response-content.formatter';
+import { formatPlacesQueryToDto } from 'src/api/shared/utils/formating/places-query.formatter';
 
 @Controller('places')
 export class PlacesController {
@@ -27,22 +27,13 @@ export class PlacesController {
 
   @Post()
   @UseGuards(RoleGuard('admin'))
-  @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
-  @UsePipes(
-    new ValidationPipe({
-      forbidNonWhitelisted: true,
-      whitelist: true,
-      transform: true,
-    }),
-  )
-  create(@Body() createPlaceDto: CreatePlaceDto) {
-    
-    return this.placesService.create(createPlaceDto);
+  public async create(@Body() createPlaceDto: CreatePlaceDto) {
+    return await this.placesService.create(createPlaceDto);
   }
 
   @Get()
   @UseGuards(RoleGuard('user'))
-  async findAll(@Query() query, @Req() req: Request, @Res() res: Response) {
+  public async findAll(@Query() query, @Req() req: Request, @Res() res: Response) {
     const places = await this.placesService.findAll(formatPlacesQueryToDto(query), {
       limit: query.limit,
       offset: query.offset,
@@ -53,7 +44,7 @@ export class PlacesController {
 
   @Get(':id')
   @UseGuards(RoleGuard('user'))
-  async findOne(
+  public async findOne(
     @Param('id') id: string,
     @Req() req: Request,
     @Res() res: Response,
@@ -65,21 +56,13 @@ export class PlacesController {
 
   @Patch(':id')
   @UseGuards(RoleGuard('admin'))
-  @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
-  @UsePipes(
-    new ValidationPipe({
-      forbidNonWhitelisted: true,
-      whitelist: true,
-      transform: true,
-    }),
-  )
-  update(@Param('id') id: string, @Body() updatePlaceDto: UpdatePlaceDto) {
-    return this.placesService.update(id, updatePlaceDto);
+  public async update(@Param('id') id: string, @Body() updatePlaceDto: UpdatePlaceDto) {
+    return await this.placesService.update(id, updatePlaceDto);
   }
 
   @Delete(':id')
   @UseGuards(RoleGuard('admin'))
-  remove(@Param('id') id: string) {
-    return this.placesService.remove(id);
+  public async remove(@Param('id') id: string) {
+    return await this.placesService.remove(id);
   }
 }

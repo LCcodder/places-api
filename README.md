@@ -12,7 +12,7 @@
 + This API works with *role-based* auth, so if you want to create/update/delete places you must provide one of the *master keys* in `token` querystring
 
 # Endpoints:
-1. `POST:/auth` - returns API token with expiration time
+1. `POST:/api/v1/auth` - returns API token with expiration time
 
     <details>
     <summary>Body</summary>
@@ -35,7 +35,7 @@
     ```
     </details>
 ---
-2. `POST:/places` **(admin route)** - creates place with provided fields and returns created place with generated `_id` and timestamps 
+2. `POST:/api/v1/places` **(admin route)** - creates place with provided fields and returns created place with generated `_id` and timestamps 
     
     <details>
     <summary>Body</summary>
@@ -178,7 +178,7 @@
     ```
     </details>
 ---
-3. `PATCH:/places` **(admin route)** - updates place with provided fields and returns updated place
+3. `PATCH:/api/v1/places` **(admin route)** - updates place with provided fields and returns updated place
 
     <details>
     <summary>Body</summary>
@@ -235,7 +235,7 @@
     ```
     </details>
 ---
-4. `DELETE:/places/:id`  **(admin route)** - deletes place by `_id`
+4. `DELETE:/api/v1/places/:id`  **(admin route)** - deletes place by `_id`
 
     <details>
     <summary>Response</summary>
@@ -247,7 +247,7 @@
     ```
     </details>
 ---
-5. `GET:/places/:id` **(user route)** - returns found place by `_id`
+5. `GET:/api/v1/places/:id` **(user route)** - returns found place by `_id`
 
 + Supports XML format, if you need given data to be in XML use `Content-Type`header with `application/xml`
 
@@ -288,7 +288,7 @@
 ---
    
 
-6. `GET:/places` **(user route)** - returns places by provided options
+6. `GET:/api/v1/places` **(user route)** - returns places by provided options
 
 + Supports XML format, if you need given data to be in XML use `Content-Type`header with `application/xml`
     

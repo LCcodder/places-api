@@ -1,4 +1,4 @@
-import { FindAllQuery } from 'src/places/dto/find-places.dto';
+import { FindAllQuery } from 'src/api/core/places/dto/find-places.dto';
 
 export const formatPlacesQueryToDto = (query: any): FindAllQuery => {
   return {

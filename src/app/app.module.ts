@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { PlacesModule } from './places/places.module';
-import { TokensModule } from './tokens/tokens.module';
+import { PlacesModule } from '../api/core/places/places.module';
+import { TokensModule } from '../api/core/tokens/tokens.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { GeoModule } from './geo/geo.module';
-import configuration from './config/configuration';
+import { GeoModule } from '../api/core/geo/geo.module';
+import configuration from '../api/shared/config/configuration';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -22,7 +22,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       context: ({ req }) => ({ headers: req.headers }),
       debug: true,
       definitions: {
-        path: join(process.cwd(), 'src/graphql/graphql.anotation.ts'),
+        path: join(process.cwd(), 'src/api/graphql/graphql.anotation.ts'),
         outputAs: 'class',
       },
     }),

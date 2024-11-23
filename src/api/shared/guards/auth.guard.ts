@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import configuration from 'src/config/configuration';
+import configuration from 'src/api/shared/config/configuration';
 
 export const RoleGuard = (role: 'admin' | 'user') => {
   @Injectable()

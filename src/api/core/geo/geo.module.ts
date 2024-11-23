@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GeoService } from './geo.service';
+import { GeoService } from './service/geo.service';
 
 @Module({
   controllers: [],
