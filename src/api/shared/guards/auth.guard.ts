@@ -24,16 +24,24 @@ export const RoleGuard = (role: 'admin' | 'user') => {
       context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
       const apiToken = RoleGuardMixin.extractToken(context)
-        
       if (!apiToken) return false;
 
+      const isAdminToken = configuration().masterKeys.includes(apiToken)
+      
+      // admin auth scenario
       if (role === 'admin') {
-        return configuration().masterKeys.includes(apiToken);
+        return isAdminToken
       }
+
+
+      // user auth scenrario
+
+      // admin can also access user routes
+      if (isAdminToken) return true
 
       try {
         this.jwtService.verify(apiToken);
-      } catch (error) {
+      } catch {
         throw new UnauthorizedException('Token not valid');
       }
 

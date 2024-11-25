@@ -25,6 +25,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
         path: join(process.cwd(), 'src/api/graphql/graphql.anotation.ts'),
         outputAs: 'class',
       },
+      path: "/api/v1/graphql"
     }),
   ],
   controllers: [AppController],
